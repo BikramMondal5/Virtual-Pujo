@@ -4,13 +4,9 @@ import { OrbitControls, Environment, Loader, Stats } from '@react-three/drei'
 import { Car } from './components/SceneObjects/Car'
 import { Suspense, useState } from 'react'
 
+// Replace the box fallback with an empty component
 function LoadingFallback() {
-  return (
-    <mesh position={[0, 0, 0]}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="hotpink" wireframe />
-    </mesh>
-  )
+  return null // Remove the cube completely
 }
 
 function App() {
@@ -26,8 +22,8 @@ function App() {
       <Canvas 
         shadows 
         camera={{ 
-          position: [3, 1.5, 3], 
-          fov: 40, 
+          position: [0.8, 0.5, 0.8], // Much closer camera position
+          fov: 55, // Even wider field of view
           near: 0.1,
           far: 100
         }}
@@ -37,7 +33,7 @@ function App() {
         <color attach="background" args={['#f0f0f0']} />
         
         {/* Lighting setup */}
-        <ambientLight intensity={0.7} />
+        <ambientLight intensity={0.8} />
         <directionalLight 
           position={[10, 10, 5]} 
           intensity={1.5} 
@@ -48,16 +44,16 @@ function App() {
         <directionalLight position={[0, -10, 0]} intensity={0.25} />
         
         <Suspense fallback={<LoadingFallback />}>
-          {/* Position and scale the car appropriately */}
+          {/* Position the car closer to the camera */}
           <Car 
-            position={[0, -0.5, 0]} 
+            position={[0, -0.15, 0]} // Raised even higher for better visibility
             rotation={[0, Math.PI / 4, 0]}
-            scale={1} // Use the scale in the Car component itself
+            scale={2.0} // Much larger scale to make car appear even closer
           />
           <Environment preset="city" />
           
-          {/* Ground plane */}
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.6, 0]} receiveShadow>
+          {/* Ground plane - adjusted to be closer to car bottom */}
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]} receiveShadow>
             <planeGeometry args={[50, 50]} />
             <shadowMaterial opacity={0.2} />
           </mesh>
@@ -67,7 +63,7 @@ function App() {
           target={[0, 0, 0]} 
           enableDamping 
           dampingFactor={0.05}
-          minDistance={2}
+          minDistance={0.5} // Allow extremely close zooming
           maxDistance={10}
         />
         
