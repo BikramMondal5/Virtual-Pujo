@@ -55,6 +55,12 @@ export function Car(props) {
               object.material.refractionRatio = 0.98
               object.material.envMapIntensity = 1
             }
+            
+            // Enhance shadows for better visibility over the map
+            if (object.material.name && object.material.name.includes('tire')) {
+              object.castShadow = true
+              object.receiveShadow = false
+            }
           }
         }
       })
@@ -64,6 +70,11 @@ export function Car(props) {
   return (
     <group {...props} dispose={null}>
       {scene && <primitive object={scene} />}
+      {/* Add a shadow plane below the car to show it's positioned on the map */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.35, 0]} receiveShadow>
+        <planeGeometry args={[5, 8]} />
+        <shadowMaterial opacity={0.3} transparent />
+      </mesh>
     </group>
   )
 }

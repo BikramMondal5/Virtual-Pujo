@@ -8,8 +8,47 @@
 .canvas-container {
   width: 100%;
   height: 100%;
-  background-color: #242424;
   position: relative;
+  background-color: transparent;
+  overflow: hidden;
+}
+
+.map-container {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.canvas-overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  pointer-events: auto; /* Allow interaction with the canvas */
+}
+
+.toggle-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  z-index: 1000;
+  transition: background-color 0.3s;
+}
+
+.toggle-button:hover {
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 .info-overlay {
@@ -23,6 +62,7 @@
   font-family: sans-serif;
   pointer-events: none;
   user-select: none;
+  z-index: 3;
 }
 
 .info-overlay p {
