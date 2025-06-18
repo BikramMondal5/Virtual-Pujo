@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, Loader, Stats } from '@react-three/drei';
+import { Environment, Loader, Stats } from '@react-three/drei';
 import { Suspense } from 'react';
 import { Car } from './Car';
 import '../../styles/CarScene.css';
@@ -51,14 +51,6 @@ export default function CarScene({
           />
           <Environment preset="city" />
         </Suspense>
-        
-        <OrbitControls 
-          target={carPosition}
-          enableDamping 
-          dampingFactor={0.05}
-          minDistance={0.5}
-          maxDistance={10}
-        />
         
         {showStats && <Stats />}
       </Canvas>

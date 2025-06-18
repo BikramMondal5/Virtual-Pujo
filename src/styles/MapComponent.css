@@ -1,12 +1,11 @@
 .map-container {
-  width: 100%;
+  width: 60%; /* Match the left column width from App.css */
   height: 100vh;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 1;
   overflow: hidden;
-  user-select: none;
 }
 
 /* Map transformation container with transform-origin centered */
@@ -16,4 +15,10 @@
   transform-origin: center center;
   position: relative;
   will-change: transform;
+  pointer-events: auto;
+}
+
+/* Ensure iframe contents are interactive */
+.map-transform-container iframe {
+  pointer-events: auto;
 }

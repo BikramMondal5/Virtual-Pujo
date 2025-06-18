@@ -7,12 +7,10 @@ import MapControls from './components/MapControls'
 function App() {
   const [showStats, setShowStats] = useState(false)
   const [carPosition, setCarPosition] = useState([0, -0.15, 0])
-  const [carRotation, setCarRotation] = useState([0, Math.PI / 4, 0])
+  const [carRotation, setCarRotation] = useState([0, Math.PI, 0]) // Updated to 180 degrees (Math.PI radians)
   
   // Map transformation states
-  const [mapZoom, setMapZoom] = useState(13) // Google Maps API zoom level
   const [mapRotation, setMapRotation] = useState(0)
-  const [mapCenter, setMapCenter] = useState({ lat: 22.535, lng: 88.365 }) // Initial center coordinates
   
   // Movement speed
   const moveSpeed = 0.1
@@ -27,28 +25,6 @@ function App() {
   
   const handleRotateRight = () => {
     setMapRotation(prev => prev + rotationStep)
-  }
-  
-  // Handle map panning
-  const handlePan = (direction) => {
-    // Approximate latitude/longitude changes based on direction
-    const latStep = 0.01;
-    const lngStep = 0.01;
-    
-    switch(direction) {
-      case 'up':
-        setMapCenter(prev => ({ ...prev, lat: prev.lat + latStep }))
-        break
-      case 'down':
-        setMapCenter(prev => ({ ...prev, lat: prev.lat - latStep }))
-        break
-      case 'left':
-        setMapCenter(prev => ({ ...prev, lng: prev.lng - lngStep }))
-        break
-      case 'right':
-        setMapCenter(prev => ({ ...prev, lng: prev.lng + lngStep }))
-        break
-    }
   }
   
   // Handle keyboard controls
@@ -88,24 +64,6 @@ function App() {
           handleRotateRight()
           e.preventDefault()
           break
-          
-        // Map panning with WASD keys
-        case 'w':
-          handlePan('up')
-          e.preventDefault()
-          break
-        case 'a':
-          handlePan('left')
-          e.preventDefault()
-          break
-        case 's':
-          handlePan('down')
-          e.preventDefault()
-          break
-        case 'd':
-          handlePan('right')
-          e.preventDefault()
-          break
       }
     }
     
@@ -118,10 +76,8 @@ function App() {
 
   return (
     <div className="canvas-container">
-      {/* Map Component - using Google Maps built-in controls */}
+      {/* Map Component - using the fixed iframe URL */}
       <MapComponent 
-        mapCenter={mapCenter}
-        mapZoom={mapZoom}
         mapRotation={mapRotation}
       />
       
@@ -132,19 +88,17 @@ function App() {
         showStats={showStats}
       />
       
-      {/* Map Controls - only for rotation and panning */}
+      {/* Map Controls - only for rotation */}
       <MapControls 
         onRotateLeft={handleRotateLeft}
         onRotateRight={handleRotateRight}
-        onPan={handlePan}
       />
       
       <div className="info-overlay">
         <p>Press 'S' to toggle stats</p>
         <p>Arrow keys: Move car</p>
         <p>Q/E: Rotate map left/right</p>
-        <p>W/A/S/D: Pan map</p>
-        <p>Use Google Maps controls to zoom</p>
+        <p>Use Google Maps controls to zoom and pan</p>
       </div>
     </div>
   )
