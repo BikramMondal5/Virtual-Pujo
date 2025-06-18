@@ -1,0 +1,14 @@
+.car-scene-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+/* Force canvas to be transparent */
+.car-scene-container canvas {
+  background-color: transparent !important;
+}
