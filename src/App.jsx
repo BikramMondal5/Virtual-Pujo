@@ -24,7 +24,7 @@ function App() {
         camera={{ 
           position: [0.8, 0.5, 0.8], // Much closer camera position
           fov: 55, // Even wider field of view
-          near: 0.1,
+          near: 0.1, 
           far: 100
         }}
         gl={{ antialias: true }}
