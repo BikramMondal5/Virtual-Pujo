@@ -1,0 +1,11 @@
+Model Information:
+* title:	2024 BYD Sealion 7
+* source:	https://sketchfab.com/3d-models/2024-byd-sealion-7-4eb4a93ae47b47f4b213dd89a0ad89f0
+* author:	Ddiaz Design (https://sketchfab.com/ddiaz-design)
+
+Model License:
+* license type:	CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions must have the same license.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "2024 BYD Sealion 7" (https://sketchfab.com/3d-models/2024-byd-sealion-7-4eb4a93ae47b47f4b213dd89a0ad89f0) by Ddiaz Design (https://sketchfab.com/ddiaz-design) licensed under CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
