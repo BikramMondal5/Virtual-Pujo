@@ -27,7 +27,7 @@ export default function CarScene({
   return (
     <div className="car-scene-container">
       <Canvas 
-        shadows 
+        shadows  
         camera={{ 
           position: [1.5, 1.2, 2.5], // Adjusted camera position for closer road view
           fov: 45, // Increased field of view for better road visibility
