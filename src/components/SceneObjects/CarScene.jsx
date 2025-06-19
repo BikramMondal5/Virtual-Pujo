@@ -22,7 +22,7 @@ export default function CarScene({
   });
 
   // Define a fixed Y position for the car to ensure it's on the road
-  const carFixedPosition = [carPosition[0], 0.05, carPosition[2]]; // Raised the car's Y position from 0 to 0.05
+  const carFixedPosition = [carPosition[0], 0.02, carPosition[2]]; // Lowered the car's Y position from 0.05 to 0.02 to bring it closer to the road
 
   return (
     <div className="car-scene-container">
