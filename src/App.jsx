@@ -1,32 +1,14 @@
 import './App.css'
 import { useState, useEffect } from 'react'
-import MapComponent from './components/Map/MapComponent'
 import CarScene from './components/SceneObjects/CarScene'
-import MapControls from './components/MapControls'
 
 function App() {
   const [showStats, setShowStats] = useState(false)
-  // Updated initial position to place car in center of the visible map section
   const [carPosition, setCarPosition] = useState([0, -0.15, 0])
-  const [carRotation, setCarRotation] = useState([0, Math.PI, 0]) // Updated to 180 degrees (Math.PI radians)
-  
-  // Map transformation states
-  const [mapRotation, setMapRotation] = useState(0)
+  const [carRotation, setCarRotation] = useState([0, Math.PI, 0])
   
   // Movement speed
   const moveSpeed = 0.1
-  
-  // Map transformation values
-  const rotationStep = 15
-  
-  // Handle map rotation
-  const handleRotateLeft = () => {
-    setMapRotation(prev => prev - rotationStep)
-  }
-  
-  const handleRotateRight = () => {
-    setMapRotation(prev => prev + rotationStep)
-  }
   
   // Handle keyboard controls
   useEffect(() => {
@@ -55,16 +37,6 @@ function App() {
           setCarRotation([0, -Math.PI / 2, 0]) // Point right
           e.preventDefault()
           break
-          
-        // Map rotation with Q and E keys
-        case 'q':
-          handleRotateLeft()
-          e.preventDefault()
-          break
-        case 'e':
-          handleRotateRight()
-          e.preventDefault()
-          break
       }
     }
     
@@ -77,29 +49,16 @@ function App() {
 
   return (
     <div className="canvas-container">
-      {/* Map Component - keeps 60% width as specified */}
-      <MapComponent 
-        mapRotation={mapRotation}
-      />
-      
-      {/* Car Scene Component - now positioned over the map */}
+      {/* Car Scene Component - now taking full screen */}
       <CarScene 
         carPosition={carPosition}
         carRotation={carRotation}
         showStats={showStats}
       />
       
-      {/* Map Controls - only for rotation */}
-      <MapControls 
-        onRotateLeft={handleRotateLeft}
-        onRotateRight={handleRotateRight}
-      />
-      
       <div className="info-overlay">
         <p>Press 'S' to toggle stats</p>
         <p>Arrow keys: Move car</p>
-        <p>Q/E: Rotate map left/right</p>
-        <p>Use Google Maps controls to zoom and pan</p>
       </div>
     </div>
   )

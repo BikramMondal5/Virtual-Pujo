@@ -2,12 +2,13 @@ import { useRef } from 'react';
 import '../../styles/MapComponent.css';
 
 export default function MapComponent({ 
-  mapRotation
+  mapRotation,
+  mapZoom = 1 // Default to 1 if not provided
 }) {
   const mapContainerRef = useRef(null);
   
-  // Calculate transform style for map rotation
-  const mapTransform = `rotate(${mapRotation}deg)`;
+  // Calculate transform style for map rotation and zoom
+  const mapTransform = `rotate(${mapRotation}deg) scale(${mapZoom})`;
 
   return (
     <div 
