@@ -1,5 +1,5 @@
 .map-container {
-  width: 60%; /* Match the left column width from App.css */
+  width: 60%; /* Keep the map at 60% width as requested */
   height: 100vh;
   position: absolute;
   top: 0;

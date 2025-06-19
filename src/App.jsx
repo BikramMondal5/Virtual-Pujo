@@ -6,6 +6,7 @@ import MapControls from './components/MapControls'
 
 function App() {
   const [showStats, setShowStats] = useState(false)
+  // Updated initial position to place car in center of the visible map section
   const [carPosition, setCarPosition] = useState([0, -0.15, 0])
   const [carRotation, setCarRotation] = useState([0, Math.PI, 0]) // Updated to 180 degrees (Math.PI radians)
   
@@ -76,12 +77,12 @@ function App() {
 
   return (
     <div className="canvas-container">
-      {/* Map Component - using the fixed iframe URL */}
+      {/* Map Component - keeps 60% width as specified */}
       <MapComponent 
         mapRotation={mapRotation}
       />
       
-      {/* Car Scene Component */}
+      {/* Car Scene Component - now positioned over the map */}
       <CarScene 
         carPosition={carPosition}
         carRotation={carRotation}
