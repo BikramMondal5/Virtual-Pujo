@@ -21,6 +21,9 @@ export default function CarScene({
     return index === 1 ? rot + (Math.PI / 12) : rot;
   });
 
+  // Define a fixed Y position for the car to ensure it's on the road
+  const carFixedPosition = [carPosition[0], -0.03, carPosition[2]];
+
   return (
     <div className="car-scene-container">
       <Canvas 
@@ -54,26 +57,26 @@ export default function CarScene({
         <directionalLight position={[0, -5, 0]} intensity={0.4} />
         
         <Suspense fallback={<LoadingFallback />}>
-          {/* City model with adjusted position and rotation for better road view */}
+          {/* City model with significantly raised position to bring road closer to car */}
           <City 
-            position={[0, -0.2, 0]} // Raised the city for better road visibility
+            position={[0, 0.1, 0]} // Further raised the city position to meet the car better
             scale={0.05}
             rotation={[0, Math.PI / 6, 0]} // Adjusted rotation to focus on roads
           />
           
-          {/* Car model with rotated position */}
+          {/* Car model with fixed Y position and rotated */}
           <Car 
-            position={carPosition}
-            rotation={adjustedCarRotation} // Using the rotated value
+            position={carFixedPosition} // Using fixed Y position
+            rotation={adjustedCarRotation}
             scale={1.5}
           />
           {/* Enhanced shadow beneath the car */}
           <ContactShadows
-            position={[0, 0.15, 0]} // Adjusted shadow position
-            opacity={0.8}
+            position={[0, -0.005, 0]} // Fine-tuned shadow to be right at the road surface
+            opacity={0.7}
             scale={8}
             blur={0.8}
-            far={0.15}
+            far={0.1}
             resolution={512}
             color="#000000"
           />
@@ -83,7 +86,7 @@ export default function CarScene({
         
         {/* Add orbital controls to allow rotation of the car view with mouse */}
         <OrbitControls 
-          minDistance={1.5} // Reduced min distance for closer view
+          minDistance={1.5}
           maxDistance={10}
           enablePan={true}
           enableZoom={true}
