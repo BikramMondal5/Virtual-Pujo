@@ -22,7 +22,7 @@ export default function CarScene({
   });
 
   // Define a fixed Y position for the car to ensure it's on the road
-  const carFixedPosition = [carPosition[0], -0.03, carPosition[2]];
+  const carFixedPosition = [carPosition[0], 0.05, carPosition[2]]; // Raised the car's Y position from 0 to 0.05
 
   return (
     <div className="car-scene-container">
@@ -57,22 +57,22 @@ export default function CarScene({
         <directionalLight position={[0, -5, 0]} intensity={0.4} />
         
         <Suspense fallback={<LoadingFallback />}>
-          {/* City model with significantly raised position to bring road closer to car */}
+          {/* City model with significantly raised position to bring road right up to the car */}
           <City 
-            position={[0, 0.1, 0]} // Further raised the city position to meet the car better
+            position={[0, 0.28, 0]} // Final increase to make the road perfectly touch the car wheels
             scale={0.05}
             rotation={[0, Math.PI / 6, 0]} // Adjusted rotation to focus on roads
           />
           
           {/* Car model with fixed Y position and rotated */}
           <Car 
-            position={carFixedPosition} // Using fixed Y position
+            position={carFixedPosition}
             rotation={adjustedCarRotation}
             scale={1.5}
           />
           {/* Enhanced shadow beneath the car */}
           <ContactShadows
-            position={[0, -0.005, 0]} // Fine-tuned shadow to be right at the road surface
+            position={[0, 0, 0]} // Adjusted shadow to be exactly at the contact point
             opacity={0.7}
             scale={8}
             blur={0.8}
