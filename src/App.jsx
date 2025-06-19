@@ -1,12 +1,12 @@
 import './App.css'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import CarScene from './components/SceneObjects/CarScene'
 import MapComponent from './components/Map/MapComponent'
 import MapControls from './components/MapControls'
 
 function App() {
   const [showStats, setShowStats] = useState(false)
-  const [carPosition, setCarPosition] = useState([0, -0.15, 0])
+  const [carPosition, setCarPosition] = useState([0, 0.1, 0])
   const [carRotation, setCarRotation] = useState([0, Math.PI, 0])
   
   // Map rotation and zoom state
@@ -14,16 +14,32 @@ function App() {
   const [mapZoom, setMapZoom] = useState(1.0)
   
   // Camera view state - setting close-up as default
-  const [cameraView, setCameraView] = useState('close-up')
+  const [cameraView, setCameraView] = useState('third-person')
   
   // Track when car movement keys are pressed
   const [carMovementDetected, setCarMovementDetected] = useState(false)
   
-  // Movement speed
-  const moveSpeed = 0.1
+  // Movement speed for non-physics mode
+  const moveSpeed = 0.15
+  
+  // Track active keys for smoother movement
+  const keysDown = useRef({
+    ArrowUp: false,
+    ArrowDown: false,
+    ArrowLeft: false,
+    ArrowRight: false
+  })
+  
+  // Track if we're using physics-based movement
+  const [usePhysicsMovement, setUsePhysicsMovement] = useState(true)
+  
+  // Set up animation frame for movement
+  const animationFrameRef = useRef(null)
   
   // Handle keyboard controls
   useEffect(() => {
+    console.log('Setting up keyboard controls')
+    
     const handleKeyDown = (e) => {
       if (e.key === 's') setShowStats(prev => !prev)
       
@@ -36,55 +52,32 @@ function App() {
           return 'close-up'
         })
       }
-
-      // Get current car rotation angle (y-axis)
-      const currentRotationY = carRotation[1]
       
-      // Set car movement detected flag for arrow keys
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-        setCarMovementDetected(true)
+      // Toggle physics mode with 'p' key
+      if (e.key === 'p') {
+        setUsePhysicsMovement(prev => !prev)
       }
-      
-      // Handle arrow key presses for car movement relative to its current rotation
-      switch (e.key) {
-        case 'ArrowUp': {
-          // Move forward in the direction the car is facing
-          const newX = carPosition[0] + Math.sin(currentRotationY) * moveSpeed
-          const newZ = carPosition[2] + Math.cos(currentRotationY) * moveSpeed
-          setCarPosition([newX, carPosition[1], newZ])
-          e.preventDefault()
-          break
-        }
-        case 'ArrowDown': {
-          // Move backward relative to car's facing direction
-          const newX = carPosition[0] - Math.sin(currentRotationY) * moveSpeed
-          const newZ = carPosition[2] - Math.cos(currentRotationY) * moveSpeed
-          setCarPosition([newX, carPosition[1], newZ])
-          e.preventDefault()
-          break
-        }
-        case 'ArrowLeft': {
-          // Only change rotation, don't move position
-          setCarRotation([0, currentRotationY + Math.PI/36, 0]) // Rotate by 5 degrees (pi/36 radians)
-          e.preventDefault()
-          break
-        }
-        case 'ArrowRight': {
-          // Only change rotation, don't move position
-          setCarRotation([0, currentRotationY - Math.PI/36, 0]) // Rotate by 5 degrees (pi/36 radians)
-          e.preventDefault()
-          break
-        }
+
+      // Update active keys for arrow keys and set movement detected flag
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        keysDown.current[e.key] = true
+        setCarMovementDetected(true)
+        console.log('Key down in App:', e.key)
+        e.preventDefault()
       }
     }
     
-    // Reset car movement flag when key is released
     const handleKeyUp = (e) => {
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-        // Add a small delay before resetting to ensure smooth camera transitions
-        setTimeout(() => {
+        keysDown.current[e.key] = false
+        
+        // Only reset movement detected if no arrow keys are pressed
+        const anyKeyDown = Object.values(keysDown.current).some(isDown => isDown)
+        if (!anyKeyDown) {
           setCarMovementDetected(false)
-        }, 200)
+        }
+        
+        e.preventDefault()
       }
     }
     
@@ -95,7 +88,78 @@ function App() {
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
     }
-  }, [carPosition, carRotation])
+  }, [])
+  
+  // Update car position for non-physics mode
+  useEffect(() => {
+    // Skip if physics mode is on
+    if (usePhysicsMovement) {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+      return
+    }
+    
+    const updateCarPosition = () => {
+      let positionChanged = false
+      let rotationChanged = false
+      
+      // Get current rotation and position values
+      const currentRotationY = carRotation[1]
+      const currentPosition = [...carPosition]
+      
+      // Handle forward/backward movement
+      if (keysDown.current.ArrowUp) {
+        const newX = currentPosition[0] + Math.sin(currentRotationY) * moveSpeed
+        const newZ = currentPosition[2] + Math.cos(currentRotationY) * moveSpeed
+        currentPosition[0] = newX
+        currentPosition[2] = newZ
+        positionChanged = true
+      }
+      
+      if (keysDown.current.ArrowDown) {
+        const newX = currentPosition[0] - Math.sin(currentRotationY) * moveSpeed
+        const newZ = currentPosition[2] - Math.cos(currentRotationY) * moveSpeed
+        currentPosition[0] = newX
+        currentPosition[2] = newZ
+        positionChanged = true
+      }
+      
+      // Handle rotation
+      let newRotationY = currentRotationY
+      if (keysDown.current.ArrowLeft) {
+        newRotationY = currentRotationY + Math.PI/36 // Rotate by 5 degrees
+        rotationChanged = true
+      }
+      
+      if (keysDown.current.ArrowRight) {
+        newRotationY = currentRotationY - Math.PI/36 // Rotate by 5 degrees
+        rotationChanged = true
+      }
+      
+      // Update states only if values changed
+      if (positionChanged) {
+        setCarPosition(currentPosition)
+      }
+      
+      if (rotationChanged) {
+        setCarRotation([0, newRotationY, 0])
+      }
+      
+      // Continue the animation frame loop
+      animationFrameRef.current = requestAnimationFrame(updateCarPosition)
+    }
+    
+    // Start the animation loop
+    animationFrameRef.current = requestAnimationFrame(updateCarPosition)
+    
+    // Cleanup on unmount or when physics mode changes
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
+    }
+  }, [carPosition, carRotation, moveSpeed, usePhysicsMovement])
 
   // Map control functions
   const handleRotateLeft = () => {
@@ -124,6 +188,20 @@ function App() {
     })
   }
 
+  // Callback handlers for car physics position and rotation updates
+  const handleCarPositionChange = (newPosition) => {
+    setCarPosition(newPosition);
+  };
+
+  const handleCarRotationChange = (newRotation) => {
+    setCarRotation(newRotation);
+  };
+  
+  // Toggle physics mode
+  const handlePhysicsToggle = () => {
+    setUsePhysicsMovement(prev => !prev);
+  };
+
   return (
     <div className="canvas-container">
       {/* Google Maps Component */}
@@ -140,13 +218,16 @@ function App() {
         onZoomOut={handleZoomOut}
       />
       
-      {/* Car Scene Component - now with camera view */}
+      {/* Car Scene Component - now with physics callbacks */}
       <CarScene 
         carPosition={carPosition}
         carRotation={carRotation}
         showStats={showStats}
         cameraView={cameraView}
         carMovementDetected={carMovementDetected}
+        onCarPositionChange={handleCarPositionChange}
+        onCarRotationChange={handleCarRotationChange}
+        usePhysics={usePhysicsMovement}
       />
       
       {/* Camera view toggle button */}
@@ -161,9 +242,19 @@ function App() {
         {cameraView === 'top-down' && 'View: Top Down'}
       </button>
       
+      {/* Physics toggle button */}
+      <button 
+        className="physics-toggle-button" 
+        onClick={handlePhysicsToggle}
+        title="Toggle physics mode"
+      >
+        {usePhysicsMovement ? 'Physics: ON' : 'Physics: OFF'}
+      </button>
+      
       <div className="info-overlay">
         <p>Press 'S' to toggle stats</p>
         <p>Press 'V' to change camera view</p>
+        <p>Press 'P' to toggle physics</p>
         <p>Arrow keys: Move car</p>
         <p>Mouse: Orbit camera view</p>
         <p>Map controls: Rotate/zoom map</p>

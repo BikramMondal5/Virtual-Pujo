@@ -19,3 +19,23 @@
 .car-scene-container canvas {
   background-color: #f5f5f5;
 }
+
+/* Physics toggle button styling */
+.physics-toggle-button {
+  position: absolute;
+  top: 75px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 14px;
+  z-index: 10;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.physics-toggle-button:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+}
