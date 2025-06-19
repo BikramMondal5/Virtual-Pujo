@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Environment, Loader, Stats, OrbitControls, ContactShadows, PerspectiveCamera } from '@react-three/drei';
-import { Suspense, useRef, useState } from 'react';
+import { Suspense, useRef, useState, useEffect } from 'react';
 import { Car } from './Car';
 import { City } from './City';
 import '../../styles/CarScene.css';
@@ -12,10 +12,11 @@ function LoadingFallback() {
 }
 
 // Follow Camera Component - handles camera positioning relative to the car
-function FollowCamera({ carPosition, carRotation, cameraView = 'close-up' }) {
+function FollowCamera({ carPosition, carRotation, cameraView = 'close-up', userControllingCamera, carMovementDetected }) {
   const { camera } = useThree();
   const cameraPositionRef = useRef(new THREE.Vector3(0, 0, 0));
   const cameraTargetRef = useRef(new THREE.Vector3(0, 0, 0));
+  const lastCarMovementRef = useRef(false);
   
   // Define camera offsets for different camera views
   const cameraOffsets = {
@@ -43,6 +44,16 @@ function FollowCamera({ carPosition, carRotation, cameraView = 'close-up' }) {
   // Setup smooth camera following with easing
   useFrame(() => {
     if (!carPosition) return;
+    
+    // Only update camera if:
+    // 1. User is not manually controlling camera, OR
+    // 2. Car movement was detected (arrow keys pressed)
+    if (userControllingCamera && !carMovementDetected && lastCarMovementRef.current === false) {
+      return;
+    }
+    
+    // Update the last car movement state
+    lastCarMovementRef.current = carMovementDetected;
     
     // Create a matrix to represent car's orientation
     const carMatrix = new THREE.Matrix4();
@@ -88,7 +99,8 @@ export default function CarScene({
   carPosition, 
   carRotation, 
   showStats = false,
-  cameraView = 'third-person' // new prop for camera view
+  cameraView = 'third-person', // new prop for camera view
+  carMovementDetected = false  // new prop to detect car movement from arrow keys
 }) {
   // Add 15 degrees (in radians) to the car's Y rotation
   const adjustedCarRotation = carRotation.map((rot, index) => {
@@ -162,14 +174,14 @@ export default function CarScene({
           
           <Environment preset="sunset" />
           
-          {/* Follow camera that moves with the car when not manually controlling */}
-          {!userControllingCamera && (
-            <FollowCamera 
-              carPosition={carFixedPosition} 
-              carRotation={adjustedCarRotation}
-              cameraView={cameraView}
-            />
-          )}
+          {/* Follow camera that respects user manual control */}
+          <FollowCamera 
+            carPosition={carFixedPosition} 
+            carRotation={adjustedCarRotation}
+            cameraView={cameraView}
+            userControllingCamera={userControllingCamera}
+            carMovementDetected={carMovementDetected}
+          />
         </Suspense>
         
         {/* Optional OrbitControls that take over when user interacts */}

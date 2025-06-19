@@ -16,6 +16,9 @@ function App() {
   // Camera view state - setting close-up as default
   const [cameraView, setCameraView] = useState('close-up')
   
+  // Track when car movement keys are pressed
+  const [carMovementDetected, setCarMovementDetected] = useState(false)
+  
   // Movement speed
   const moveSpeed = 0.1
   
@@ -36,6 +39,11 @@ function App() {
 
       // Get current car rotation angle (y-axis)
       const currentRotationY = carRotation[1]
+      
+      // Set car movement detected flag for arrow keys
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        setCarMovementDetected(true)
+      }
       
       // Handle arrow key presses for car movement relative to its current rotation
       switch (e.key) {
@@ -70,10 +78,22 @@ function App() {
       }
     }
     
+    // Reset car movement flag when key is released
+    const handleKeyUp = (e) => {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        // Add a small delay before resetting to ensure smooth camera transitions
+        setTimeout(() => {
+          setCarMovementDetected(false)
+        }, 200)
+      }
+    }
+    
     window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keyup', handleKeyUp)
     
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
     }
   }, [carPosition, carRotation])
 
@@ -126,6 +146,7 @@ function App() {
         carRotation={carRotation}
         showStats={showStats}
         cameraView={cameraView}
+        carMovementDetected={carMovementDetected}
       />
       
       {/* Camera view toggle button */}
