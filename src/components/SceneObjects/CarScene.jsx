@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { Environment, Loader, Stats, OrbitControls, ContactShadows, Grid } from '@react-three/drei';
+import { Environment, Loader, Stats, OrbitControls, ContactShadows } from '@react-three/drei';
 import { Suspense } from 'react';
 import { Car } from './Car';
 import { City } from './City';
@@ -15,13 +15,19 @@ export default function CarScene({
   carRotation, 
   showStats = false 
 }) {
+  // Add 15 degrees (in radians) to the car's Y rotation
+  const adjustedCarRotation = carRotation.map((rot, index) => {
+    // Only adjust the Y rotation (index 1)
+    return index === 1 ? rot + (Math.PI / 12) : rot;
+  });
+
   return (
     <div className="car-scene-container">
       <Canvas 
         shadows 
         camera={{ 
-          position: [2, 1.5, 3], // Closer camera position for a better view of the car
-          fov: 40,
+          position: [1.5, 1.2, 2.5], // Adjusted camera position for closer road view
+          fov: 45, // Increased field of view for better road visibility
           near: 0.1, 
           far: 100
         }}
@@ -48,22 +54,22 @@ export default function CarScene({
         <directionalLight position={[0, -5, 0]} intensity={0.4} />
         
         <Suspense fallback={<LoadingFallback />}>
-          {/* City model with increased scale */}
+          {/* City model with adjusted position and rotation for better road view */}
           <City 
-            position={[0, -0.5, 0]} 
-            scale={0.03} // Increased from 0.01 to 0.03 (3x larger)
-            rotation={[0, Math.PI / 4, 0]} 
+            position={[0, -0.2, 0]} // Raised the city for better road visibility
+            scale={0.05}
+            rotation={[0, Math.PI / 6, 0]} // Adjusted rotation to focus on roads
           />
           
-          {/* Car model with position, rotation, and fixed scale */}
+          {/* Car model with rotated position */}
           <Car 
             position={carPosition}
-            rotation={carRotation}
-            scale={3.0} // Further increased scale for better visibility
+            rotation={adjustedCarRotation} // Using the rotated value
+            scale={1.5}
           />
           {/* Enhanced shadow beneath the car */}
           <ContactShadows
-            position={[0, 0.35, 0]}
+            position={[0, 0.15, 0]} // Adjusted shadow position
             opacity={0.8}
             scale={8}
             blur={0.8}
@@ -71,24 +77,13 @@ export default function CarScene({
             resolution={512}
             color="#000000"
           />
-          {/* Add a grid for better spatial reference */}
-          <Grid 
-            infiniteGrid 
-            fadeDistance={50} 
-            fadeStrength={1.5}
-            cellSize={1}
-            cellThickness={0.6}
-            sectionSize={5}
-            sectionThickness={1.2}
-            sectionColor="#2080ff"
-            cellColor="#6080ff"
-          />
+          
           <Environment preset="sunset" />
         </Suspense>
         
         {/* Add orbital controls to allow rotation of the car view with mouse */}
         <OrbitControls 
-          minDistance={2} 
+          minDistance={1.5} // Reduced min distance for closer view
           maxDistance={10}
           enablePan={true}
           enableZoom={true}
