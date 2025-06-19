@@ -2,6 +2,7 @@ import { Canvas } from '@react-three/fiber';
 import { Environment, Loader, Stats, OrbitControls, ContactShadows, Grid } from '@react-three/drei';
 import { Suspense } from 'react';
 import { Car } from './Car';
+import { City } from './City';
 import '../../styles/CarScene.css';
 
 // Empty loading fallback
@@ -47,6 +48,13 @@ export default function CarScene({
         <directionalLight position={[0, -5, 0]} intensity={0.4} />
         
         <Suspense fallback={<LoadingFallback />}>
+          {/* City model with increased scale */}
+          <City 
+            position={[0, -0.5, 0]} 
+            scale={0.03} // Increased from 0.01 to 0.03 (3x larger)
+            rotation={[0, Math.PI / 4, 0]} 
+          />
+          
           {/* Car model with position, rotation, and fixed scale */}
           <Car 
             position={carPosition}
