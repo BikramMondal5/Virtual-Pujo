@@ -21,28 +21,39 @@ function App() {
     const handleKeyDown = (e) => {
       if (e.key === 's') setShowStats(prev => !prev)
 
-      // Handle arrow key presses for car movement
+      // Get current car rotation angle (y-axis)
+      const currentRotationY = carRotation[1]
+      
+      // Handle arrow key presses for car movement relative to its current rotation
       switch (e.key) {
-        case 'ArrowUp':
-          setCarPosition(prev => [prev[0], prev[1], prev[2] - moveSpeed])
-          setCarRotation([0, 0, 0]) // Point forward
+        case 'ArrowUp': {
+          // Move forward in the direction the car is facing
+          const newX = carPosition[0] + Math.sin(currentRotationY) * moveSpeed
+          const newZ = carPosition[2] + Math.cos(currentRotationY) * moveSpeed
+          setCarPosition([newX, carPosition[1], newZ])
           e.preventDefault()
           break
-        case 'ArrowDown':
-          setCarPosition(prev => [prev[0], prev[1], prev[2] + moveSpeed])
-          setCarRotation([0, Math.PI, 0]) // Point backward
+        }
+        case 'ArrowDown': {
+          // Move backward relative to car's facing direction
+          const newX = carPosition[0] - Math.sin(currentRotationY) * moveSpeed
+          const newZ = carPosition[2] - Math.cos(currentRotationY) * moveSpeed
+          setCarPosition([newX, carPosition[1], newZ])
           e.preventDefault()
           break
-        case 'ArrowLeft':
-          setCarPosition(prev => [prev[0] - moveSpeed, prev[1], prev[2]])
-          setCarRotation([0, Math.PI / 2, 0]) // Point left
+        }
+        case 'ArrowLeft': {
+          // Only change rotation, don't move position
+          setCarRotation([0, currentRotationY + Math.PI/36, 0]) // Rotate by 5 degrees (pi/36 radians)
           e.preventDefault()
           break
-        case 'ArrowRight':
-          setCarPosition(prev => [prev[0] + moveSpeed, prev[1], prev[2]])
-          setCarRotation([0, -Math.PI / 2, 0]) // Point right
+        }
+        case 'ArrowRight': {
+          // Only change rotation, don't move position
+          setCarRotation([0, currentRotationY - Math.PI/36, 0]) // Rotate by 5 degrees (pi/36 radians)
           e.preventDefault()
           break
+        }
       }
     }
     
@@ -51,7 +62,7 @@ function App() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [])
+  }, [carPosition, carRotation])
 
   // Map control functions
   const handleRotateLeft = () => {
