@@ -33,6 +33,31 @@
   background-color: rgba(0, 0, 0, 0.9);
 }
 
+/* Camera view toggle button */
+.camera-toggle-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  z-index: 1000;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.camera-toggle-button:hover {
+  background-color: rgba(0, 0, 0, 0.9);
+  transform: scale(1.05);
+}
+
+.camera-toggle-button:active {
+  transform: scale(0.95);
+}
+
 .info-overlay {
   position: absolute;
   bottom: 20px;

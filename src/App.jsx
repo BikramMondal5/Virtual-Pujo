@@ -13,6 +13,9 @@ function App() {
   const [mapRotation, setMapRotation] = useState(0)
   const [mapZoom, setMapZoom] = useState(1.0)
   
+  // Camera view state (third-person, first-person, top-down)
+  const [cameraView, setCameraView] = useState('third-person')
+  
   // Movement speed
   const moveSpeed = 0.1
   
@@ -20,6 +23,15 @@ function App() {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 's') setShowStats(prev => !prev)
+      
+      // Toggle between camera views with 'v' key
+      if (e.key === 'v') {
+        setCameraView(prev => {
+          if (prev === 'third-person') return 'first-person'
+          if (prev === 'first-person') return 'top-down'
+          return 'third-person'
+        })
+      }
 
       // Get current car rotation angle (y-axis)
       const currentRotationY = carRotation[1]
@@ -80,6 +92,15 @@ function App() {
   const handleZoomOut = () => {
     setMapZoom(prev => Math.max(prev - 0.2, 0.5))
   }
+  
+  // Handle camera view change
+  const handleCameraViewChange = () => {
+    setCameraView(prev => {
+      if (prev === 'third-person') return 'first-person'
+      if (prev === 'first-person') return 'top-down'
+      return 'third-person'
+    })
+  }
 
   return (
     <div className="canvas-container">
@@ -97,15 +118,28 @@ function App() {
         onZoomOut={handleZoomOut}
       />
       
-      {/* Car Scene Component - now taking full screen */}
+      {/* Car Scene Component - now with camera view */}
       <CarScene 
         carPosition={carPosition}
         carRotation={carRotation}
         showStats={showStats}
+        cameraView={cameraView}
       />
+      
+      {/* Camera view toggle button */}
+      <button 
+        className="camera-toggle-button" 
+        onClick={handleCameraViewChange}
+        title="Change camera view"
+      >
+        {cameraView === 'third-person' && 'View: 3rd Person'}
+        {cameraView === 'first-person' && 'View: 1st Person'}
+        {cameraView === 'top-down' && 'View: Top Down'}
+      </button>
       
       <div className="info-overlay">
         <p>Press 'S' to toggle stats</p>
+        <p>Press 'V' to change camera view</p>
         <p>Arrow keys: Move car</p>
         <p>Mouse: Orbit camera view</p>
         <p>Map controls: Rotate/zoom map</p>
