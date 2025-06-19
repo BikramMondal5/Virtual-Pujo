@@ -70,11 +70,7 @@ export function Car(props) {
   return (
     <group {...props} dispose={null}>
       {scene && <primitive object={scene} />}
-      {/* Add a shadow plane below the car to show it's positioned on the map */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.35, 0]} receiveShadow>
-        <planeGeometry args={[5, 8]} />
-        <shadowMaterial opacity={0.3} transparent />
-      </mesh>
+      {/* Shadow is now handled by the ContactShadows in CarScene.jsx */}
     </group>
   )
 }

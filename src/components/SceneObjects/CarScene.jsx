@@ -19,7 +19,7 @@ export default function CarScene({
       <Canvas 
         shadows 
         camera={{ 
-          position: [3, 2, 5], // Better angle for viewing the car
+          position: [2, 1.5, 3], // Closer camera position for a better view of the car
           fov: 40,
           near: 0.1, 
           far: 100
@@ -36,31 +36,31 @@ export default function CarScene({
         }}
       >
         {/* Lighting setup */}
-        <ambientLight intensity={0.8} />
+        <ambientLight intensity={0.7} />
         <directionalLight 
-          position={[10, 10, 5]} 
-          intensity={1.5} 
+          position={[10, 10, -5]} 
+          intensity={1.8} 
           castShadow 
           shadow-mapSize={[2048, 2048]}
         />
-        <directionalLight position={[-10, 10, 5]} intensity={0.8} />
-        <directionalLight position={[0, -10, 0]} intensity={0.5} />
+        <directionalLight position={[-5, 8, 10]} intensity={0.5} />
+        <directionalLight position={[0, -5, 0]} intensity={0.4} />
         
         <Suspense fallback={<LoadingFallback />}>
           {/* Car model with position, rotation, and fixed scale */}
           <Car 
             position={carPosition}
             rotation={carRotation}
-            scale={1.0} // Increased scale for better visibility
+            scale={3.0} // Further increased scale for better visibility
           />
           {/* Enhanced shadow beneath the car */}
           <ContactShadows
-            position={[0, -0.33, 0]}
-            opacity={0.4}
-            scale={10}
-            blur={2}
-            far={0.8}
-            resolution={256}
+            position={[0, 0.35, 0]}
+            opacity={0.8}
+            scale={8}
+            blur={0.8}
+            far={0.15}
+            resolution={512}
             color="#000000"
           />
           {/* Add a grid for better spatial reference */}
