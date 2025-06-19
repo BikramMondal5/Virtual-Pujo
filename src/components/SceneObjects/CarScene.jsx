@@ -12,13 +12,17 @@ function LoadingFallback() {
 }
 
 // Follow Camera Component - handles camera positioning relative to the car
-function FollowCamera({ carPosition, carRotation, cameraView = 'third-person' }) {
+function FollowCamera({ carPosition, carRotation, cameraView = 'close-up' }) {
   const { camera } = useThree();
   const cameraPositionRef = useRef(new THREE.Vector3(0, 0, 0));
   const cameraTargetRef = useRef(new THREE.Vector3(0, 0, 0));
   
   // Define camera offsets for different camera views
   const cameraOffsets = {
+    'close-up': {
+      position: new THREE.Vector3(0.3, 0.6, -1.2), // Much closer to the car, slightly to the side
+      lookAt: new THREE.Vector3(0, 0.3, 0)         // Looking at the car body
+    },
     'third-person': {
       position: new THREE.Vector3(0, 1.5, -4), // Behind and above car
       lookAt: new THREE.Vector3(0, 0.5, 2)     // Look ahead of the car
@@ -67,8 +71,8 @@ function FollowCamera({ carPosition, carRotation, cameraView = 'third-person' })
     );
     
     // Smoothly interpolate camera position (easing effect)
-    // Use faster easing for first-person view
-    const easingFactor = cameraView === 'first-person' ? 0.2 : 0.1;
+    // Use faster easing for close-up view for more responsive feel
+    const easingFactor = (cameraView === 'first-person' || cameraView === 'close-up') ? 0.2 : 0.1;
     cameraPositionRef.current.lerp(targetCameraPosition, easingFactor);
     cameraTargetRef.current.lerp(targetLookAt, easingFactor);
     

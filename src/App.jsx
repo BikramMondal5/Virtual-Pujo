@@ -13,8 +13,8 @@ function App() {
   const [mapRotation, setMapRotation] = useState(0)
   const [mapZoom, setMapZoom] = useState(1.0)
   
-  // Camera view state (third-person, first-person, top-down)
-  const [cameraView, setCameraView] = useState('third-person')
+  // Camera view state - setting close-up as default
+  const [cameraView, setCameraView] = useState('close-up')
   
   // Movement speed
   const moveSpeed = 0.1
@@ -27,9 +27,10 @@ function App() {
       // Toggle between camera views with 'v' key
       if (e.key === 'v') {
         setCameraView(prev => {
+          if (prev === 'close-up') return 'third-person'
           if (prev === 'third-person') return 'first-person'
           if (prev === 'first-person') return 'top-down'
-          return 'third-person'
+          return 'close-up'
         })
       }
 
@@ -96,9 +97,10 @@ function App() {
   // Handle camera view change
   const handleCameraViewChange = () => {
     setCameraView(prev => {
+      if (prev === 'close-up') return 'third-person'
       if (prev === 'third-person') return 'first-person'
       if (prev === 'first-person') return 'top-down'
-      return 'third-person'
+      return 'close-up'
     })
   }
 
@@ -132,6 +134,7 @@ function App() {
         onClick={handleCameraViewChange}
         title="Change camera view"
       >
+        {cameraView === 'close-up' && 'View: Close-up'}
         {cameraView === 'third-person' && 'View: 3rd Person'}
         {cameraView === 'first-person' && 'View: 1st Person'}
         {cameraView === 'top-down' && 'View: Top Down'}
